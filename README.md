@@ -1,4 +1,10 @@
-<h1>GML! <img src="https://cdn2.iconfinder.com/data/icons/artificial-intelligence-6/64/ArtificialIntelligence9-512.png" alt="Brain+Machine" height="38" width="38"> </img> <img src="https://cdn2.iconfinder.com/data/icons/artificial-intelligence-6/64/ArtificialIntelligence15-512.png" alt="Adding AI" height="38" width="38"> </img> <img src="https://cdn1.iconfinder.com/data/icons/science-technology-outline/91/Science__Technology_35-512.png" alt="Revolution" height="38" width="38"> </img>  </h1>
+<h1>GML <img src="https://cdn2.iconfinder.com/data/icons/artificial-intelligence-6/64/ArtificialIntelligence9-512.png" alt="Brain+Machine" height="38" width="38"> </img> <img src="https://cdn2.iconfinder.com/data/icons/artificial-intelligence-6/64/ArtificialIntelligence15-512.png" alt="Adding AI" height="38" width="38"> </img> <img src="https://cdn1.iconfinder.com/data/icons/science-technology-outline/91/Science__Technology_35-512.png" alt="Revolution" height="38" width="38"> </img>  </h1>
+
+<h2> Creators </h2>
+
+Muhammad Ahmed https://www.linkedin.com/in/muhammad4hmed/
+Naman Tuli     https://www.linkedin.com/in/naman-tuli-3213361a6
+
 
 [![Generic badge](https://img.shields.io/badge/Data_Science-AUTO-<COLOR>.svg)](https://github.com/Muhammad4hmed/Ghalat-Machine-Learning)
 [![Generic badge](https://img.shields.io/badge/Machine_Learning-AUTO-<COLOR>.svg)](https://github.com/Muhammad4hmed/Ghalat-Machine-Learning) 
