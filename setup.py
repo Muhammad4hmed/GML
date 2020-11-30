@@ -25,7 +25,7 @@ setup(
     packages=["GML"],
     include_package_data=True,
     install_requires=['scikit-learn','xgboost','fastai==1.0.61','catboost','Keras','lightgbm', 'torch', 'torchvision', 'category_encoders','Pint',
-                     'string', 'pandas', 'numpy', 'torchvision', 'torch', 'albumentations','transformers',
+                     'pandas', 'numpy', 'torchvision', 'torch', 'albumentations','transformers',
                      'efficientnet_pytorch', 'matplotlib', 'seaborn', 'tqdm', 'requests', 'beautifulsoup4',
                      'ftfy', 'tensorflow', 'sympy'],
     
