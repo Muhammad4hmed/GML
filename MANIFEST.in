@@ -1,0 +1,5 @@
+include README.md LICENSE
+
+recursive-include GML/AUTO_FEATURE_ENGINEERING *
+recursive-include GML/sweetviz *
+recursive-include GML *
