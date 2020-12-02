@@ -33,7 +33,8 @@ pip install GML
 ```
 
 <br>
-<a href = "https://pypi.org/project/GML/">https://pypi.org/project/GML</a> 
+<a href = "https://pypi.org/project/GML/">https://pypi.org/project/GML</a> <br>
+If you are facing any pytorch related issue during installation, kindly refer to following solution: https://github.com/Muhammad4hmed/GML/issues/6#issuecomment-735912557
 <br>
 <br>
 <h2>Features:</h2><br>
