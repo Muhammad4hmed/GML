@@ -28,7 +28,7 @@ class FeatureEngineering:
                  encode_data = True, method = 'TargetEncoder', thresh = 0.10,
                  normalize = True, method_transform='LogTransform', thresh_numeric_transform = 0.10, 
                  remove_outliers = True, qu_fence = 'inner', new_features = True, task = 'classification', 
-                 test_data = None, verbose=1, feateng_steps=2):
+                 test_data = pd.DataFrame(), verbose=1, feateng_steps=2):
         """
         Call get_new_data() to get:
             X,y and test_data(if any)
@@ -95,7 +95,12 @@ class FeatureEngineering:
             handle = False
             if data.isnull().sum().max():
                 print('There is missing data')
-                res, success, data = self.fill_missing_data(data.copy(), method_cat = method_cat, method_num = method_num, 
+                if not test_data.empty:
+                    res, success, data, test_data = self.fill_missing_data(data.copy(), method_cat = method_cat, method_num = method_num, 
+                                                            drop = drop, cat_cols = cat_cols, numeric_cols = numeric_cols, 
+                                                            thresh_cat = thresh_cat, thresh_numeric = thresh_numeric, test_data=test_data)
+                else:
+                    res, success, data, test_data = self.fill_missing_data(data.copy(), method_cat = method_cat, method_num = method_num, 
                                                             drop = drop, cat_cols = cat_cols, numeric_cols = numeric_cols, 
                                                             thresh_cat = thresh_cat, thresh_numeric = thresh_numeric)
                 if success:
@@ -113,10 +118,15 @@ class FeatureEngineering:
             print('Encoding Data')
             print('='*30)
             if cat_cols:
-                df, cats = self.Encode(data.copy(), data[label].copy(), cat_cols = cat_cols, method = method, thresh = thresh)
+                if not test_data.empty:
+                    data, test_data = self.Encode(data.copy(), data[label].copy(), cat_cols = cat_cols, method = method, thresh = thresh, test_data = test_data.copy())
+                else:
+                    data, _ = self.Encode(data.copy(), data[label].copy(), cat_cols = cat_cols, method = method, thresh = thresh)
             else:
-                df, cats = self.Encode(data.copy(), data[label].copy(), method = method, thresh = thresh)
-            data[cats] = df
+                if not test_data.empty:
+                    data, test_data = self.Encode(data.copy(), data[label].copy(), method = method, thresh = thresh, test_data = test_data)
+                else:
+                    data, cats = self.Encode(data.copy(), data[label].copy(), method = method, thresh = thresh)
             print('Data Encoded')
             print('='*30)
             print('\n\n')
@@ -126,11 +136,19 @@ class FeatureEngineering:
             print('Transforming Data')
             print('='*30)
             if numeric_cols:
-                res, msg, cols = self.transformation(data.copy(), numeric_cols = numeric_cols, method=method_transform, 
-                                                     thresh_numeric = thresh_numeric_transform)
+                if not test_data.empty:
+                    res, data, cols, test_data = self.transformation(data.copy(), numeric_cols = numeric_cols, method=method_transform, 
+                                                     thresh_numeric = thresh_numeric_transform, test_data = test_data, label = label)
+                else:
+                    res, data, cols, _ = self.transformation(data.copy(), numeric_cols = numeric_cols, method=method_transform, 
+                                                     thresh_numeric = thresh_numeric_transform, label = label)
             else:
-                res, msg, cols = self.transformation(data.copy(), method=method_transform , 
-                                                     thresh_numeric = thresh_numeric_transform)
+                if not test_data.empty:
+                    res, data, cols, test_data = self.transformation(data.copy(), method=method_transform, 
+                                                     thresh_numeric = thresh_numeric_transform, test_data = test_data, label = label)
+                else:
+                    res, data, cols, _ = self.transformation(data.copy(), method=method_transform , 
+                                                     thresh_numeric = thresh_numeric_transform, label = label)
             print('Data Transformed')
             print('='*30)
             print('\n\n')
@@ -156,7 +174,7 @@ class FeatureEngineering:
                 except:
                     pass
                 X = afc.fit_transform(X, y)
-                if not test_data == None:
+                if not test_data.empty:
                     test_data = afc.transform(test_data)
             else:
                 afc = AutoFeatRegressor(verbose=1, feateng_steps=feateng_steps)
@@ -166,7 +184,7 @@ class FeatureEngineering:
                 except:
                     pass
                 X = afc.fit_transform(X, y)
-                if not test_data == None:
+                if not test_data.empty:
                     test_data = afc.transform(test_data)
             print('='*30)
             print('\n\n')
@@ -218,7 +236,7 @@ class FeatureEngineering:
     
     def fill_missing_data( self,
         data, method_cat = 'Mode', method_num = 'Mean', drop = True, cat_cols = None, 
-        numeric_cols = None, thresh_cat = 0.10, thresh_numeric = 0.10):
+        numeric_cols = None, thresh_cat = 0.10, thresh_numeric = 0.10, test_data = pd.DataFrame()):
         """
         data: data 
         method_num: possible methods are: Mean(default), Median, Mode, Constant and Interpolate
@@ -234,9 +252,13 @@ class FeatureEngineering:
                     try:
                         if data[col].isnull().value_counts()[True] > data[col].isnull().value_counts()[False]:
                             data.drop(col,axis=1,inplace=True)
+                            if not test_data.empty:
+                                test_data.drop(col,axis=1,inplace=True)
                     except:
                         if data[col].isnull().value_counts()[0] == True:
                             data.drop(col,axis=1,inplace=True)
+                            if not test_data.empty:
+                                test_data.drop(col,axis=1,inplace=True)
                         else:
                             continue
             cats = []
@@ -253,31 +275,46 @@ class FeatureEngineering:
                 for col in cats:
                     if method_cat == 'Mode':
                         data[col].fillna(data[col].mode()[0],inplace=True)
+                        if not test_data.empty:
+                            test[col].fillna(data[col].mode()[0],inplace=True)
                     elif method_cat == 'Constant':
                         data[col].fillna(-9999,inplace=True)
+                        if not test_data.empty:
+                            test[col].fillna(-9999,inplace=True)
                     else:
                         data[col].interpolate(method ='linear', limit_direction ='forward', inplace=True)
+                        if not test_data.empty:
+                            test[col].interpolate(method ='linear', limit_direction ='forward', inplace=True)
             if not method_num:
                 for col in numeric:
                     data[col] = data[col].astype('float')
                     if method_num == 'Mean':
                         data[col].fillna(data[col].mean(),inplace=True)
+                        if not test_data.empty:
+                            test[col].fillna(data[col].mean(),inplace=True)
                     elif method_num == 'Mode':
                         data[col].fillna(data[col].mode()[0],inplace=True)
+                        if not test_data.empty:
+                            test[col].fillna(data[col].mode()[0],inplace=True)
                     elif method_num == 'Constant':
                         data[col].fillna(-9999,inplace=True)
+                        if not test_data.empty:
+                            test[col].fillna(-9999,inplace=True)
                     else:
                         data[col].interpolate(method ='linear', limit_direction ='forward', inplace=True)
+                        if not test_data.empty:
+                            test[col].interpolate(method ='linear', limit_direction ='forward', inplace=True)
             global fill_method, cc, nc, d
             fill_method = (method_cat + ' & ' + method_num if not method_cat == method_num else method_cat)
             cc = cats
             nc = numeric
             d = drop
-            return "Success",True,data
+            return "Success",True,data, test_data
         except Exception as e:
-            return e, False, data
+            print(e)
+            return e, False, data, test_data
     
-    def Encode(self, data, y = None, method = 'TargetEncoder', cat_cols = None, thresh = 0.10):
+    def Encode(self, data, y = None, method = 'TargetEncoder', cat_cols = None, thresh = 0.10, test_data = pd.DataFrame()):
         '''
         data: data
         y: target column
@@ -303,7 +340,7 @@ class FeatureEngineering:
         '''
         try:
             cats = []
-            if cat_cols:
+            if not cat_cols:
                 cats = self.identify_cats(data, thresh)
             else:
                 cats = cat_cols
@@ -344,16 +381,16 @@ class FeatureEngineering:
                 encoder = WOEEncoder(cols=cats)
             if method == 'PolynomialWrapper':
                 encoder = PolynomialWrapper(cols=cats)
-            global enc_method, e_cc
-            enc_method = method
-            e_cc = cats
             encoder.fit(data[cats], y)
-            print('Success')
+            if not test_data.empty:
+                test_data[cats] = encoder.transform(test_data[cats])
+            data[cats] = encoder.transform(data[cats])
             #fig = count_plot_categorical(data, cats)
-            return encoder.transform(data[cats]), cats
+            return data, test_data
         except Exception as e:
-            return e
-    def transformation(self, data, method='LogTransform', numeric_cols = None, thresh_numeric = 0.10):
+            print(e)
+            return e, test_data
+    def transformation(self, data, method='LogTransform', numeric_cols = None, thresh_numeric = 0.10, test_data = pd.DataFrame(), label = None):
         '''
         data: data
         method: method of transformation
@@ -371,14 +408,16 @@ class FeatureEngineering:
         '''
         try:
             num_c = []
-            if numeric_cols:
+            if not numeric_cols:
                 num_c = self.identify_numeric(data, thresh_numeric)
             else:
                 num_c = numeric_cols
-            table1 = plot_table(data, num_c)
+            num_c.remove(label)
             scaler = None
             if method == 'LogTransform':
                 data[num_c] = np.log1p(data[num_c])
+                if not test_data.empty:
+                    test_data[num_c] = np.log1p(test_data[num_c])
             if method == 'StandardScaler':
                 scaler = StandardScaler()
             if method == 'MinMaxScaler':
@@ -395,9 +434,12 @@ class FeatureEngineering:
                 scaler = PowerTransformer(method='box-cox')
             if not method == 'LogTransform':
                 data[num_c] = scaler.fit_transform(data[num_c])
-            return "Success", data, num_c
+                if not test_data.empty:
+                    test_data[num_c] = scaler.transform(test_data[num_c])
+            return "Success", data, num_c, test_data
         except Exception as e:
-            return e, data, num_c
+            print(e)
+            return e, data, num_c, test_data
 
     def remove_outliers_using_quantiles(self, qu_dataset, qu_field, qu_fence = 'inner'):
         '''
