@@ -241,15 +241,15 @@ class FeatureEngineering:
                             continue
             cats = []
             numeric = []
-            if not cat_cols == None:
+            if not cat_cols:
                 cats = cat_cols
-            if not numeric_cols == None:
+            if not numeric_cols:
                 numeric = numeric_cols
             if not cats:
                 cats = self.identify_cats(data, thresh_cat)
             if not numeric:
                 numeric = self.identify_numeric(data, thresh_numeric)
-            if not method_cat == "None":
+            if not method_cat:
                 for col in cats:
                     if method_cat == 'Mode':
                         data[col].fillna(data[col].mode()[0],inplace=True)
@@ -257,7 +257,7 @@ class FeatureEngineering:
                         data[col].fillna(-9999,inplace=True)
                     else:
                         data[col].interpolate(method ='linear', limit_direction ='forward', inplace=True)
-            if not method_num == "None":
+            if not method_num:
                 for col in numeric:
                     data[col] = data[col].astype('float')
                     if method_num == 'Mean':
