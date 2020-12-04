@@ -303,11 +303,13 @@ class FeatureEngineering:
         '''
         try:
             cats = []
-            if cat_cols == None:
+            if cat_cols:
                 cats = self.identify_cats(data, thresh)
+            else:
+                cats = cat_cols
             encoder = None
             if method == 'BackwardDifferenceEncoder':
-                encoder = BackwardDifferenceEncoder(cols=[...])
+                encoder = BackwardDifferenceEncoder(cols=cats)
             if method == 'BaseNEncoder':
                 encoder = BaseNEncoder(cols=cats)
             if method == 'BinaryEncoder':
@@ -369,8 +371,10 @@ class FeatureEngineering:
         '''
         try:
             num_c = []
-            if numeric_cols == None:
+            if numeric_cols:
                 num_c = self.identify_numeric(data, thresh_numeric)
+            else:
+                num_c = numeric_cols
             table1 = plot_table(data, num_c)
             scaler = None
             if method == 'LogTransform':
