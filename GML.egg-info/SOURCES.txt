@@ -19,6 +19,7 @@ GML/AUTO_FEATURE_ENGINEERING/autofeat.py
 GML/AUTO_FEATURE_ENGINEERING/autofeatlight.py
 GML/AUTO_FEATURE_ENGINEERING/feateng.py
 GML/AUTO_FEATURE_ENGINEERING/featsel.py
+GML/AUTO_FEATURE_ENGINEERING/.ipynb_checkpoints/feateng-checkpoint.py
 GML/sweetviz/__init__.py
 GML/sweetviz/config.py
 GML/sweetviz/dataframe_report.py

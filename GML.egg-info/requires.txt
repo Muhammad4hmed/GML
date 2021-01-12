@@ -8,7 +8,6 @@ torch
 torchvision
 category_encoders
 Pint
-string
 pandas
 numpy
 torchvision
