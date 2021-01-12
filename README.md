@@ -15,6 +15,7 @@
 <a href="https://www.linkedin.com/in/naman-tuli-3213361a6">Naman Tuli</a>
 
 <h2> Contributors </h2>
+<a href="https://www.linkedin.com/in/mehrankamal36">Mehran Kamal</a> 
 <a href="https://www.linkedin.com/in/rafeyirahman">Rafey Iqbal Rahman</a> 
 <br>
 <br>
